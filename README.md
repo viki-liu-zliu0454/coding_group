@@ -1,1 +1,1 @@
-# coding_group
+# Major project
