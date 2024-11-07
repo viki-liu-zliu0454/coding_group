@@ -2,24 +2,46 @@ let cirs = []; // Used to store 4 types of dynamic circle ring
 let stars = []; // Used to store stars
 let meteors = []; // Used to store meteors
 let scaleFactor = 1; // Scale factor for resizing content
-
 let img; // Declare a variable to store the image
+let music
+let waveform
+let fft, analyser, rms = 0
+// Stores the waveform data of the audio, obtained using the waveform() method from p5.FFT.
+// This is an array of amplitude values used to create visual effects that respond dynamically to audio changes.
+let arcAng = 0; // Rotation angle of the outer circle arc
 
 function preload() {
-  // Preload the image of the hologram circle
-  img = loadImage("https://png.pngtree.com/png-vector/20240601/ourmid/pngtree-circle-gradient-holographic-sphere-button-png-image_12588776.png");
-// This image is from https://pngtree.com/so/holographic-circle.
+  music = loadSound("asset/Lindsey Stirling - Lose You Now.mp3")
+  // Load music
 }
+
+function mousePressed() {
+  // Toggle music playback on mouse click: play if paused, pause if playing
+  if (!music.isPlaying()) {  // If the music is not playing
+    music.loop()             // Start playing music in a loop
+  } else {                   // Otherwise (if the music is playing)
+    music.pause()            // Pause the music
+  }
+}
+
+
 
 function setup() {
 
   createCanvas(900, 900);
   angleMode(DEGREES);
+  // Create a new instance of p5.FFT() object
+  fft = new p5.FFT();
+  // Create a new Amplitude analyser, this will analyse the volume of the song
+  analyser = new p5.Amplitude();
+  // Connect the input of the analyser to the song
+  analyser.setInput(music);
 
   // Add circle rings at different positions: the first parameter is the x-coordinate, 
   // the second is the y-coordinate, the third is the circle ring type, 
   // the fourth is the circle ring size, and the fifth is the color
-
+  
+  cirs.push(new Circle(20, 9, 1, 190, color(128, 89, 136))); // Transparent on the outside
   cirs.push(new Circle(20, 9, 1, 190, color(128, 89, 136))); // First circle ring in the top left
 
   cirs.push(new Circle(345, 130, 2, 130, color(240, 250, 157))); // Second circle ring at the top
@@ -47,112 +69,153 @@ function setup() {
 }
 
 function draw() {
+  // Use p5.FFT to get the waveform data of the current audio
+  waveform = fft.waveform();
+  
+  // Apply the scale factor to adjust the size of the content
+  scale(scaleFactor);
 
-    // Calculate the scale factor and apply it to the content.
-    scale(scaleFactor);
+  // Create a gradient background from dark blue to dark purple
+  let topColor = color(1, 17, 92); // Top color: dark blue
+  let bottomColor = color(60, 6, 102); // Bottom color: dark purple
 
-   // Create a gradient background from dark blue to dark purple.
-   let topColor = color(1, 17, 92); // dark blue
-   let bottomColor = color(60, 6, 102); // dark purple
- 
-   // Generate a color gradient between dark blue and black using `lerpColor()`.
-   // This technique is from https://p5js.org/reference/p5/lerpColor/
-   for (let y = 0; y < height / scaleFactor; y++) {
-     let inter = map(y, 0, height / scaleFactor, 0, 1);
-     let c = lerpColor(topColor, bottomColor, inter);
-     stroke(c);
-     line(0, y, width / scaleFactor, y);
-   }
+  // Use `lerpColor()` to generate a color gradient from dark blue to dark purple
+  // Each line is drawn with an interpolated color in the gradient
+  for (let y = 0; y < height / scaleFactor; y++) {
+    // `inter` is a value between 0 and 1, representing the position from top to bottom
+    let inter = map(y, 0, height / scaleFactor, 0, 1);
+    let c = lerpColor(topColor, bottomColor, inter); // Calculate the color for the current line
+    stroke(c); // Set the color for the current line
+    line(0, y, width / scaleFactor, y); // Draw a horizontal line across the full canvas width
+  }
 
-   // Start creating the meteor section:
+  // Start creating the meteor section
   if (random(1) < 0.1) {
-    // There is a 10% chance to add a new meteor on each frame.
+    // There is a 10% chance to add a new meteor on each frame
     meteors.push(new Meteor());
   }
+
+  // Draw all static stars
   for (let i = 0; i < stars.length; i++) {
-    // Draw 500 static stars.
-    stars[i].display();
+    stars[i].display(); // Display each star
   }
+
+  // Draw and update all meteors
   for (let i = 0; i < meteors.length; i++) {
-    // Draw the meteors.
-    meteors[i].update();
-    meteors[i].display();
+    meteors[i].update(); // Update meteor position
+    meteors[i].display(); // Display meteor on the canvas
   }
+
+  // Remove meteors that have moved past the bottom of the canvas
   for (let i = meteors.length - 1; i >= 0; i--) {
-    // Clear the meteor when it reaches the bottom of the canvas.
-    if (meteors[i].y > height / scaleFactor + 100)
-      meteors.splice(i, 1);
+    if (meteors[i].y > height / scaleFactor + 100) // Check if meteor is out of bounds
+      meteors.splice(i, 1); // Remove the meteor from the array
   }
 
-
-    // Draw a transparent gradient white circle under each dynamic circle ring.
+  // Draw a transparent, gradient white circle underneath each dynamic circle ring
   for (let i = 0; i < cirs.length; i++) {
-    let baseX = cirs[i].x;
-    let baseY = cirs[i].y;
-    let baseSize = cirs[i].cirSize * 0.5;
+    let baseX = cirs[i].x; // X-coordinate of the dynamic circle
+    let baseY = cirs[i].y; // Y-coordinate of the dynamic circle
+    let baseSize = cirs[i].cirSize * 0.5; // Base size for the feathering effect
 
-    // Overlay multiple semi-transparent concentric circles to create a feathering effect visually
-    for (let j = 0; j < 5; j++) { // Adjust the loop count to control the degree of feathering
+    // Overlay multiple semi-transparent concentric circles for a feathering effect
+    for (let j = 0; j < 5; j++) { // Adjust the loop count to control the intensity of feathering
       let alpha = map(j, 0, 10, 50, 0); // Gradually decrease opacity from the center outward
-      let size = baseSize + j * 40; // The size of the circle gradually increases
+      let size = baseSize + j * 40; // Increase the size of each concentric circle
       
-      fill(255, alpha);
-      noStroke();
-      ellipse(baseX, baseY, size);
+      fill(255, alpha); // Set color with adjusted opacity
+      noStroke(); // Remove outline for a smoother gradient
+      ellipse(baseX, baseY, size); // Draw the concentric circle
     }
   }
+  if (music.isPlaying()) {
+    // When the music is playing, set rms (root mean square) to the current audio level
+    rms = analyser.getLevel();
+  } else {
+    // If the music is paused, gradually reduce rms towards zero
+    rms = lerp(rms, 0.001, 0.1);
+  }
 
-  // Draw all dynamic circle rings 
+  // Draw all dynamic circle rings
   for (let i = 0; i < cirs.length; i++) {
-    cirs[i].display();
-    
+    cirs[i].display(); // Display each circle ring
     drawWhiteCircle(cirs[i]); // Draw a white circular border around each dynamic ring
-    drawImagesAroundCircle(cirs[i]); // Draw the hologram circle images around the circle rings
-  } 
+  }
+
+  // Adjust the rotation angle of the outer arc based on the audio volume (rms)
+  arcAng += rms * 10;
 }
 
-// Function to draw white circular borders around the dynamic circle rings
+
+  // Draw all dynamic circle rings
+for (let i = 0; i < cirs.length; i++) {
+  cirs[i].display(); // Display each dynamic ring
+  drawWhiteCircle(cirs[i]); // Draw a white border around each ring
+}
+// Adjust arc rotation angle based on volume level (rms)
+arcAng += rms * 10;
+
+// Draw all dynamic circle rings with additional images
+for (let i = 0; i < cirs.length; i++) {
+  cirs[i].display();
+  drawWhiteCircle(cirs[i]);
+  drawImagesAroundCircle(cirs[i]); // Draw hologram images around each ring
+}
+
+// Draw a white border around a dynamic circle ring
 function drawWhiteCircle(circle) {
-  stroke(255, 50); // White in 50% opacity
-  strokeWeight(10); // Bold border
+  stroke(255, 50); // Semi-transparent white
+  strokeWeight(10); // Border thickness
   noFill();
   ellipse(circle.x, circle.y, circle.cirSize * 2.05);
 }
 
-// Function to draw the hologram circle images around the circle rings
+// Draw hologram images around a dynamic circle ring
 function drawImagesAroundCircle(circle) {
-  let numImages = 15; // Set the number of images.
+  let numImages = 15; // Number of images
   for (let j = 0; j < numImages; j++) {
-    let angle = map(j, 0, numImages, 366, TWO_PI); // Calculate the angle for each image
-    let x = circle.x + cos(angle) * (circle.cirSize); // The x-coordinate of the image
-    let y = circle.y + sin(angle) * (circle.cirSize); // The y-coordinate of the image
-    image(img, x-8, y-8, 15, 15); // Draw the image with a width and height of 15x15
+    let angle = map(j, 0, numImages, 366, TWO_PI); // Calculate angle for each image
+    let x = circle.x + cos(angle) * circle.cirSize;
+    let y = circle.y + sin(angle) * circle.cirSize;
+    image(img, x - 8, y - 8, 15, 15); // Draw image at specified position
   }
 }
 
+// Draw a semi-transparent border that responds to volume level
+function drawWhiteCircle(circle) {
+  stroke(255, 50); // Semi-transparent white
+  strokeWeight(5); // Border thickness
+  noFill();
 
-// Class representing the static stars with properties
+  let s = circle.cirSize * 2.05 * map(rms, 0, 1, 0.8, 1.2); // Size changes with rms
+  push();
+  translate(circle.x, circle.y);
+  rotate(arcAng); // Rotate based on rms
+
+  // Draw multiple arcs around the circle, with length based on volume
+  for (let a = 0; a < 360; a += 45) {
+    // Uncomment to draw arcs: arc(0, 0, s, s, a, a + rms * 90);
+  }
+  pop();
+}
+
+// Class representing a static star
 class Star {
   constructor() {
-    // Generate a random position for the star within the canvas bounds
+    // Random position within canvas bounds
     this.x = random(width);
     this.y = random(height);
 
-    // Assign a random color to each star with a certain probability
-    if (random(1) < 0.5) {
-      this.col = color(200, 161, 192);
-    } else {
-      this.col = color(255);
-    }
+    // Randomly choose star color
+    this.col = random(1) < 0.5 ? color(200, 161, 192) : color(255);
   }
+  
   display() {
-    // Draw the static stars
-    stroke(this.col);
-    strokeWeight(2);
-    point(this.x, this.y); // This technique is from https://p5js.org/reference/p5/point/
+    stroke(this.col); // Set color
+    strokeWeight(2); // Set size
+    point(this.x, this.y); // Draw star
   }
 }
-
 // Class representing the meteors with properties
 class Meteor {
   constructor() {
@@ -196,23 +259,26 @@ class Circle {
   }
 
   init() {
-    // Add different types of particles at different positions based on the type of dynamic circle ring 
+    // Add particles in different arrangements based on the circle ring style
     if (this.style == 1) {
-      this.layer = 8; // Number of circle ring layers
-      for (let l = 0; l < this.layer; l += 1) {
+      this.layer = 8; // Number of layers in the ring
+      for (let l = 0; l < this.layer; l++) {
         for (let i = 0; i < 4; i++) {
           for (let n = 0; n < 90; n += 2) {
-            // Calculate the position, rotation angle, opacity, and size data for each circle ring 
-            let r = map(l, 0, this.layer, this.cirSize * 0.1, this.cirSize);
-            let angle = map(i, 0, 4, 0, 360) + this.angle + n;
+            // Calculate position, rotation angle, opacity, and size for each particle
+            let r = map(l, 0, this.layer, this.cirSize * 0.1, this.cirSize); // Radius for this layer
+            let angle = map(i, 0, 4, 0, 360) + this.angle + n; // Rotation angle
             let x = cos(angle) * r;
             let y = sin(angle) * r;
-            let alp = map(n, 0, 90, 255, 0);
+            let alp = map(n, 0, 90, 255, 0); // Gradual opacity fade
+            
+            // Add a new particle with the calculated properties
             this.parts.push(new Particle1(x, y, alp, this.col));
           }
         }
       }
     }
+  
     else if (this.style == 2) {
       this.layer = 15; // Number of circle ring layers
       for (let l = 0; l < this.layer; l += 1) {
@@ -247,7 +313,7 @@ class Circle {
     }
 
     else if (this.style == 4) {
-      this.layer = 6; // Number of circle ring layers
+      this.layer = 11; // Number of circle ring layers
       for (let l = 0; l < this.layer; l += 1) {
         for (let i = 0; i < 3; i++) {
           for (let n = 0; n < l * 4 + 12; n++) {
@@ -262,20 +328,46 @@ class Circle {
         }
       }
     }
-  }
-
-  display() {
+  }display() {
+    push();
+    translate(this.x, this.y);
+    noFill();
+    beginShape();
+    stroke(255, 50); // Semi-transparent white for waveform outline
+    strokeWeight(3);
+  
+    // Draw the outer waveform line based on audio data
+    for (let i = 0; i < waveform.length; i++) {
+      let r = map(waveform[i], -1, 1, this.cirSize * 0.5, this.cirSize * 1.1); // Radius based on waveform data
+      let deg = map(i, 0, waveform.length, 0, 360); // Map index to angle around the circle
+  
+      let x = cos(deg) * r;
+      let y = sin(deg) * r;
+      vertex(x, y); // Add vertex point based on calculated position
+    }
+    endShape();
+    pop();
+  
+    // Draw all particles inside the dynamic circle ring
     for (let i = 0; i < this.parts.length; i++) {
-      // Draw particles inside the dynamic circle ring
       push();
       translate(this.x, this.y);
       rotate(this.angle);
-      this.parts[i].display();
+  
+      if (this.static) {
+        // Scale particle based on waveform data to make it respond to the audio
+        let r = map(waveform[i % waveform.length], -1, 1, 0.5, 1.1);
+        scale(r); // Adjust particle size based on audio data
+      }
+  
+      this.parts[i].display(); // Display each particle
       pop();
     }
-    this.angle += this.rotateDir * 1; // Make the circle ring rotate.
   
-}}
+    // Rotate the entire circle ring based on the audio volume level (rms)
+    this.angle += this.rotateDir * rms * 10;
+  }
+}
 
 // Two types of particles
 class Particle1 {
@@ -283,16 +375,17 @@ class Particle1 {
     this.x = x;
     this.y = y;
     this.alp = alp;
-    this.sw = 4; // Set the size
+    this.sw = 6; // Set the size
 
     this.r = red(col);
     this.g = green(col);
     this.b = blue(col);
   }
   display() {
-    strokeWeight(this.sw);
-    stroke(this.r, this.g, this.b, this.alp);
-    point(this.x, this.y);
+    // Set the stroke weight and color with transparency, then draw the particle
+    strokeWeight(this.sw);               // Set particle size
+    stroke(this.r, this.g, this.b, this.alp); // Set color and transparency
+    point(this.x, this.y);               // Draw particle at (x, y) position
   }
 }
 class Particle2 {
