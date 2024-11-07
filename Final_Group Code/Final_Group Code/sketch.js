@@ -11,7 +11,7 @@ let arcAng = 0; // Rotation angle of the outer circle arc
 
 function preload() {
   music = loadSound("asset/Lindsey Stirling - Lose You Now.mp3")
-  // Load music
+  // Load the music file
 }
 
 function mousePressed() {
@@ -74,11 +74,11 @@ function draw() {
   // Apply the scale factor to adjust the size of the content
   scale(scaleFactor);
 
-  // Create a gradient background from dark blue to dark purple
-  let topColor = color(1, 17, 92); // Top color: dark blue
-  let bottomColor = color(60, 6, 102); // Bottom color: dark purple
+  // Create a gradient background from Black to dark blue
+  let topColor = color(0); // Top color: Black
+  let bottomColor = color(45, 64, 116); // Bottom color: dark blue
 
-  // Use `lerpColor()` to generate a color gradient from dark blue to dark purple
+  // Draw a gradient background line by line from black to dark blue
   // Each line is drawn with an interpolated color in the gradient
   for (let y = 0; y < height / scaleFactor; y++) {
     // `inter` is a value between 0 and 1, representing the position from top to bottom
@@ -153,13 +153,24 @@ function draw() {
   // Adjust the rotation angle of the outer arc based on the audio volume (rms)
   arcAng += rms * 10;
     
+  if (millis() < 5000) {
+    // Display instructional text for the first 5 seconds of the program
+    fill(255, 200);
+    textAlign(CENTER);
+    textSize(30);
+    noStroke();
+    // Set text to bold and italic
+    textStyle(BOLDITALIC);
+    text("Click on the screen to play music", 450, 450);
+  }
 }
+
 
 
 function waveformBar() {
   // Draw audio spectrum bars based on waveform data
   for (let i = 0; i < waveform.length; i++) {
-    let hei = waveform[i] * 200; // Set height of each rectangle based on waveform data
+    let hei = waveform[i] * 200; // Set bar height based on waveform data
     let wid = 900 / waveform.length * 0.5; // Calculate width of each rectangle
     let x = map(i, 0, waveform.length, 0, width); // Map rectangle position along the width of the canvas
     rectMode(CENTER); // Draw rectangles from their center
@@ -176,12 +187,11 @@ function waveformBar() {
 
 // Draw a white border around a dynamic circle ring
 function drawWhiteCircle(circle) {
-  stroke(255, 50); // Set stroke color to semi-transparent white
+  stroke(255, 50); // Semi-transparent white stroke
   strokeWeight(5); // Set border thickness
-  noFill(); // Disable fill to create a hollow circle
+  noFill(); // Hollow circle
   
-  // Calculate the size of the arc based on the audio volume (rms)
-  let s = circle.cirSize * 2.05 * map(rms, 0, 1, 0.8, 1.2);
+  let s = circle.cirSize * 2.05 * map(rms, 0, 1, 0.8, 1.2); // Adjust size based on rms
   
   push(); // Start a new drawing state
   translate(circle.x, circle.y); // Move the origin to the center of the circle
