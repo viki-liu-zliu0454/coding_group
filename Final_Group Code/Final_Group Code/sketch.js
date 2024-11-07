@@ -2,7 +2,6 @@ let cirs = []; // Used to store 4 types of dynamic circle ring
 let stars = []; // Used to store stars
 let meteors = []; // Used to store meteors
 let scaleFactor = 1; // Scale factor for resizing content
-let img; // Declare a variable to store the image
 let music
 let waveform
 let fft, analyser, rms = 0
@@ -41,31 +40,31 @@ function setup() {
   // the second is the y-coordinate, the third is the circle ring type, 
   // the fourth is the circle ring size, and the fifth is the color
   
-  cirs.push(new Circle(20, 9, 1, 190, color(128, 89, 136))); // Transparent on the outside
-  cirs.push(new Circle(20, 9, 1, 190, color(128, 89, 136))); // First circle ring in the top left
-
-  cirs.push(new Circle(345, 130, 2, 130, color(240, 250, 157))); // Second circle ring at the top
-
-  cirs.push(new Circle(650, 71, 3, 150, color(154, 160, 196))); // Third circle ring at the top
-
-  cirs.push(new Circle(840, 306, 4, 120, color(154, 160, 196))); // First circle ring on the right edge
-
-  cirs.push(new Circle(134, 370, 3, 150, color(171, 248, 255))); // Circle ring in the middle-left of the canvas
-
-  cirs.push(new Circle(515, 451, 2, 200, color(255, 133, 204))); // Circle ring in the center of the canvas
-
-  cirs.push(new Circle(-40, 715, 1, 200, color(255))); // First circle ring at the bottom edge
-
-  cirs.push(new Circle(630, 903, 4, 200, color(153, 191, 236))); // Third circle ring at the bottom edge
-
-  cirs.push(new Circle(310, 730, 2, 120, color(153, 191, 236))); // Second circle ring at the bottom edge
-
-  cirs.push(new Circle(850, 600, 1, 140, color(255))); // Second circle ring on the right edge
   
-  for (let i = 0; i < 500; i++) {
-    // Add 500 stationary stars
+  cirs.push(new Circle(20, 9, 1, 190, color(128, 89, 136), true)); // First circle ring in the top left
+  cirs.push(new Circle(515, 451, 2, 200, color(255, 133, 204), true)); // Circle ring in the center of the canvas
+  cirs.push(new Circle(-40, 715, 1, 200, color(255), true)); // First circle ring at the bottom edge
+
+  cirs.push(new Circle(345, 130, 2, 130, color(240, 250, 157), true)); // Second circle ring at the top
+
+  cirs.push(new Circle(650, 71, 3, 150, color(154, 160, 196), false)); // Third circle ring at the top
+
+  cirs.push(new Circle(840, 306, 4, 120, color(154, 160, 196), false)); // First circle ring on the right edge
+
+  cirs.push(new Circle(134, 370, 3, 150, color(171, 248, 255), false)); // Circle ring in the middle-left of the canvas
+
+
+  cirs.push(new Circle(630, 903, 4, 200, color(153, 191, 236), false)); // Third circle ring at the bottom edge
+
+  cirs.push(new Circle(310, 730, 2, 120, color(153, 191, 236), true)); // Second circle ring at the bottom edge
+
+  cirs.push(new Circle(850, 600, 1, 140, color(255), true)); // Second circle ring on the right edge
+
+  for (let i = 0; i < 800; i++) {
+    // Add 800 stationary stars
     stars.push(new Star());
   }
+
 }
 
 function draw() {
@@ -97,9 +96,14 @@ function draw() {
 
   // Draw all static stars
   for (let i = 0; i < stars.length; i++) {
+    // Draw stars.
+    push()
+    translate(width / 2, height / 2)
+    rotate(frameCount)
     stars[i].display(); // Display each star
+    pop()
   }
-
+  
   // Draw and update all meteors
   for (let i = 0; i < meteors.length; i++) {
     meteors[i].update(); // Update meteor position
@@ -144,76 +148,56 @@ function draw() {
 
   // Adjust the rotation angle of the outer arc based on the audio volume (rms)
   arcAng += rms * 10;
+  
+  
+  
 }
-
-
-  // Draw all dynamic circle rings
-for (let i = 0; i < cirs.length; i++) {
-  cirs[i].display(); // Display each dynamic ring
-  drawWhiteCircle(cirs[i]); // Draw a white border around each ring
-}
-// Adjust arc rotation angle based on volume level (rms)
-arcAng += rms * 10;
-
-// Draw all dynamic circle rings with additional images
-for (let i = 0; i < cirs.length; i++) {
-  cirs[i].display();
-  drawWhiteCircle(cirs[i]);
-  drawImagesAroundCircle(cirs[i]); // Draw hologram images around each ring
-}
-
 // Draw a white border around a dynamic circle ring
 function drawWhiteCircle(circle) {
-  stroke(255, 50); // Semi-transparent white
-  strokeWeight(10); // Border thickness
-  noFill();
-  ellipse(circle.x, circle.y, circle.cirSize * 2.05);
-}
-
-// Draw hologram images around a dynamic circle ring
-function drawImagesAroundCircle(circle) {
-  let numImages = 15; // Number of images
-  for (let j = 0; j < numImages; j++) {
-    let angle = map(j, 0, numImages, 366, TWO_PI); // Calculate angle for each image
-    let x = circle.x + cos(angle) * circle.cirSize;
-    let y = circle.y + sin(angle) * circle.cirSize;
-    image(img, x - 8, y - 8, 15, 15); // Draw image at specified position
+  stroke(255, 50); // Set stroke color to semi-transparent white
+  strokeWeight(5); // Set border thickness
+  noFill(); // Disable fill to create a hollow circle
+  
+  // Calculate the size of the arc based on the audio volume (rms)
+  let s = circle.cirSize * 2.05 * map(rms, 0, 1, 0.8, 1.2);
+  
+  push(); // Start a new drawing state
+  translate(circle.x, circle.y); // Move the origin to the center of the circle
+  rotate(arcAng); // Rotate the arcs based on the current angle
+  
+  // Draw multiple arcs around the circle, with length based on the audio volume (rms)
+  for (let a = 0; a < 360; a += 45) { 
+    // Loop through 360 degrees in increments of 45
+    arc(0, 0, s, s, a, a + rms * 90); 
+    // Draw an arc at the current angle with size based on rms
   }
+  
+  pop(); 
 }
 
-// Draw a semi-transparent border that responds to volume level
-function drawWhiteCircle(circle) {
-  stroke(255, 50); // Semi-transparent white
-  strokeWeight(5); // Border thickness
-  noFill();
 
-  let s = circle.cirSize * 2.05 * map(rms, 0, 1, 0.8, 1.2); // Size changes with rms
-  push();
-  translate(circle.x, circle.y);
-  rotate(arcAng); // Rotate based on rms
-
-  // Draw multiple arcs around the circle, with length based on volume
-  for (let a = 0; a < 360; a += 45) {
-    // Uncomment to draw arcs: arc(0, 0, s, s, a, a + rms * 90);
-  }
-  pop();
-}
 
 // Class representing a static star
 class Star {
   constructor() {
-    // Random position within canvas bounds
-    this.x = random(width);
-    this.y = random(height);
+    // Generate a random position for the star within the canvas bounds
+    this.x = random(-width * 0.7, width * 0.7);
+    this.y = random(-width * 0.7, width * 0.7);
 
-    // Randomly choose star color
-    this.col = random(1) < 0.5 ? color(200, 161, 192) : color(255);
+    // Assign a random color to each star with a certain probability
+    if (random(1) < 0.5) {
+      this.col = color(200, 161, 192);
+    } else {
+      this.col = color(255);
+    }
   }
-  
   display() {
-    stroke(this.col); // Set color
-    strokeWeight(2); // Set size
-    point(this.x, this.y); // Draw star
+    // Draw the static stars
+    push()
+    stroke(this.col);
+    strokeWeight(2);
+    point(this.x, this.y); // This technique is from https://p5js.org/reference/p5/point/
+    pop()
   }
 }
 // Class representing the meteors with properties
@@ -227,13 +211,19 @@ class Meteor {
   }
   display() {
     // Draw the meteor and its tail
-    fill(255);
-    stroke(255, 150);
-    ellipse(this.x, this.y, random(4, 7));
-    line(this.x, this.y, - this.vx * 10 + this.x, - this.vy * 10 + this.y)
+    fill(255); // Set fill color to white for the meteor
+    stroke(255, 80); // Set stroke color to semi-transparent white for the tail
+    strokeWeight(1); // Set stroke weight for the tail
+    ellipse(this.x, this.y, random(4, 7)); // Draw the meteor as a small ellipse with a random size
+  
+    // Generate a random length for the meteor's tail
+    let tailLeng = random(5, 16);
+  
+    // Draw the tail line extending from the meteor's position
+    line(this.x, this.y, -this.vx * tailLeng + this.x, -this.vy * tailLeng + this.y);
   }
   update() {
-    // Make the meteor move.
+    // Update the meteor's position, making it move by adding velocity
     this.x += this.vx;
     this.y += this.vy;
   }
@@ -241,11 +231,11 @@ class Meteor {
 
 // Class representing the dynamic circle rings with properties
 class Circle {
-  constructor(x, y, s, size, col) {
+  constructor(x, y, s1, size, col, s2) {
     // Initialize dynamic circle ring
     this.x = x;
     this.y = y;
-    this.style = s; //The type of the circle rings
+    this.style = s1; //The type of the circle rings
     this.cirSize = size;
     this.parts = [];
     this.angle = 0;
@@ -256,13 +246,15 @@ class Circle {
       this.rotateDir = -1;
     }
     this.init();
+    // Control whether particles move in response to music
+     this.static = s2
   }
 
   init() {
     // Add particles in different arrangements based on the circle ring style
     if (this.style == 1) {
       this.layer = 8; // Number of layers in the ring
-      for (let l = 0; l < this.layer; l++) {
+      for (let l = 0; l < this.layer; l += 1) {
         for (let i = 0; i < 4; i++) {
           for (let n = 0; n < 90; n += 2) {
             // Calculate position, rotation angle, opacity, and size for each particle
@@ -313,7 +305,7 @@ class Circle {
     }
 
     else if (this.style == 4) {
-      this.layer = 11; // Number of circle ring layers
+      this.layer = 6; // Number of circle ring layers
       for (let l = 0; l < this.layer; l += 1) {
         for (let i = 0; i < 3; i++) {
           for (let n = 0; n < l * 4 + 12; n++) {
@@ -328,7 +320,8 @@ class Circle {
         }
       }
     }
-  }display() {
+  }
+  display() {
     push();
     translate(this.x, this.y);
     noFill();
@@ -348,6 +341,9 @@ class Circle {
     endShape();
     pop();
   
+
+
+
     // Draw all particles inside the dynamic circle ring
     for (let i = 0; i < this.parts.length; i++) {
       push();
@@ -359,7 +355,7 @@ class Circle {
         let r = map(waveform[i % waveform.length], -1, 1, 0.5, 1.1);
         scale(r); // Adjust particle size based on audio data
       }
-  
+     
       this.parts[i].display(); // Display each particle
       pop();
     }
@@ -375,7 +371,7 @@ class Particle1 {
     this.x = x;
     this.y = y;
     this.alp = alp;
-    this.sw = 6; // Set the size
+    this.sw = 4; // Set the size
 
     this.r = red(col);
     this.g = green(col);
