@@ -41,26 +41,26 @@ function setup() {
   // the fourth is the circle ring size, and the fifth is the color
   
   
-  cirs.push(new Circle(20, 9, 1, 190, color(128, 89, 136), true)); // First circle ring in the top left
-  cirs.push(new Circle(515, 451, 2, 200, color(255, 133, 204), true)); // Circle ring in the center of the canvas
-  cirs.push(new Circle(-40, 715, 1, 200, color(255), true)); // First circle ring at the bottom edge
+  cirs.push(new Circle(20, 9, 1, 160, color(176,224,230), true)); // First circle ring in the top left
+  cirs.push(new Circle(515, 451, 2, 200, color(255,250,250), true)); // Circle ring in the center of the canvas
+  cirs.push(new Circle(-40, 715, 1, 200, color(	250,250,210), true)); // First circle ring at the bottom edge
 
-  cirs.push(new Circle(345, 130, 2, 130, color(240, 250, 157), true)); // Second circle ring at the top
+  cirs.push(new Circle(345, 130, 2, 130, color(250,250,210), true)); // Second circle ring at the top
 
-  cirs.push(new Circle(650, 71, 3, 150, color(154, 160, 196), false)); // Third circle ring at the top
+  cirs.push(new Circle(650, 71, 3, 130, color(169,169,169), true)); // Third circle ring at the top
 
-  cirs.push(new Circle(840, 306, 4, 120, color(154, 160, 196), false)); // First circle ring on the right edge
+  cirs.push(new Circle(840, 306, 2, 150, color(176,224,230), false)); // First circle ring on the right edge
 
-  cirs.push(new Circle(134, 370, 3, 150, color(171, 248, 255), false)); // Circle ring in the middle-left of the canvas
+  cirs.push(new Circle(134, 370, 3, 140, color(153, 191, 236), false)); // Circle ring in the middle-left of the canvas
 
 
-  cirs.push(new Circle(630, 903, 4, 200, color(153, 191, 236), false)); // Third circle ring at the bottom edge
+  cirs.push(new Circle(630, 903, 4, 200, color(	255,239,213), false)); // Third circle ring at the bottom edge
 
-  cirs.push(new Circle(310, 730, 2, 120, color(153, 191, 236), true)); // Second circle ring at the bottom edge
+  cirs.push(new Circle(310, 730, 2, 150, color(153, 191, 236), false)); // Second circle ring at the bottom edge
 
-  cirs.push(new Circle(850, 600, 1, 140, color(255), true)); // Second circle ring on the right edge
+  cirs.push(new Circle(850, 600, 1, 140, color(250,250,210), true)); // Second circle ring on the right edge
 
-  for (let i = 0; i < 800; i++) {
+  for (let i = 0; i < 900; i++) {
     // Add 800 stationary stars
     stars.push(new Star());
   }
@@ -127,15 +127,18 @@ function draw() {
     let baseSize = cirs[i].cirSize * 0.5; // Base size for the feathering effect
 
     // Overlay multiple semi-transparent concentric circles for a feathering effect
-    for (let j = 0; j < 5; j++) { // Adjust the loop count to control the intensity of feathering
-      let alpha = map(j, 0, 10, 50, 0); // Gradually decrease opacity from the center outward
-      let size = baseSize + j * 40; // Increase the size of each concentric circle
-      
-      fill(255, alpha); // Set color with adjusted opacity
-      noStroke(); // Remove outline for a smoother gradient
-      ellipse(baseX, baseY, size); // Draw the concentric circle
-    }
+    for (let j = 0; j < 10; j++) { 
+    // Adjust the loop count to control the intensity of feathering
+    let alpha = map(j,0, 10, 40, 0); // Gradually decrease opacity from the center outward
+
+    // Use sin function to animate size changes over time
+    let size = baseSize + j * 40 + sin(frameCount * 10 + j) * 10; // Oscillate the size
+
+    fill(255, alpha); // Set color with adjusted opacity
+    noStroke(); // Remove outline for a smoother gradient
+    ellipse(baseX, baseY, size); // Draw the concentric circle
   }
+    }
   if (music.isPlaying()) {
     // When the music is playing, set rms (root mean square) to the current audio level
     rms = analyser.getLevel();
@@ -168,13 +171,22 @@ function draw() {
 
 
 function waveformBar() {
+  // Define the gradient colors: blue to purple
+  let startColor = color(	255,255,255); // white
+  let endColor = color(135,206,250); //LightSkyBlue
+
   // Draw audio spectrum bars based on waveform data
   for (let i = 0; i < waveform.length; i++) {
     let hei = waveform[i] * 200; // Set bar height based on waveform data
-    let wid = 900 / waveform.length * 0.5; // Calculate width of each rectangle
+    let wid = 900 / waveform.length * 0.3; // Calculate width of each rectangle
     let x = map(i, 0, waveform.length, 0, width); // Map rectangle position along the width of the canvas
+    
+    // Calculate the color for the current rectangle based on position in the gradient
+    let inter = map(i, 0, waveform.length, 0, 1); // Interpolation factor from 0 to 1
+    let c = lerpColor(startColor, endColor, inter); // Interpolated color
+
     rectMode(CENTER); // Draw rectangles from their center
-    fill(128, 89, 136); // Set rectangle color
+    fill(c); // Set rectangle color
     noStroke(); // Remove rectangle border
 
     // Draw rectangle at the top of the canvas
@@ -270,10 +282,10 @@ class Circle {
     this.style = s1; //The type of the circle rings
     this.cirSize = size;
     this.parts = [];
-    this.angle = 0;
+    this.angle = 10;
     this.col = col;
     // Control the rotation direction
-    this.rotateDir = 1;
+    this.rotateDir = 4;
     if (random(1) < 0.5) {
       this.rotateDir = -1;
     }
@@ -393,7 +405,7 @@ class Circle {
     }
   
     // Rotate the entire circle ring based on the audio volume level (rms)
-    this.angle += this.rotateDir * rms * 10;
+    this.angle += this.rotateDir * rms * 15;
   }
 }
 
