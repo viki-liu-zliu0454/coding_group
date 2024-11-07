@@ -60,7 +60,7 @@ function setup() {
 
   cirs.push(new Circle(850, 600, 1, 140, color(250,250,210), true)); // Second circle ring on the right edge
 
-  for (let i = 0; i < 900; i++) {
+  for (let i = 0; i < 800; i++) {
     // Add 800 stationary stars
     stars.push(new Star());
   }
@@ -93,8 +93,8 @@ function draw() {
   waveformBar()
 
   // Start creating the meteor section
-  if (random(1) < 0.1) {
-    // There is a 10% chance to add a new meteor on each frame
+  if (random(1) < 0.7) {
+    // There is a 70% chance to add a new meteor on each frame
     meteors.push(new Meteor());
   }
 
@@ -297,7 +297,7 @@ class Circle {
   init() {
     // Add particles in different arrangements based on the circle ring style
     if (this.style == 1) {
-      this.layer = 8; // Number of layers in the ring
+      this.layer = 14; // Number of layers in the ring
       for (let l = 0; l < this.layer; l += 1) {
         for (let i = 0; i < 4; i++) {
           for (let n = 0; n < 90; n += 2) {
@@ -332,7 +332,7 @@ class Circle {
       }
     }
     else if (this.style == 3) {
-      this.layer = 10; // Number of circle ring layers
+      this.layer = 13; // Number of circle ring layers
       for (let l = 0; l < this.layer; l += 1) {
         for (let i = 0; i < 3; i++) {
           for (let n = 0; n < l + 2; n++) {
@@ -371,7 +371,7 @@ class Circle {
     noFill();
     beginShape();
     stroke(255, 50); // Semi-transparent white for waveform outline
-    strokeWeight(3);
+    strokeWeight(1);
   
     // Draw the outer waveform line based on audio data
     for (let i = 0; i < waveform.length; i++) {
