@@ -88,6 +88,10 @@ function draw() {
     line(0, y, width / scaleFactor, y); // Draw a horizontal line across the full canvas width
   }
 
+  
+  // Draw two audio spectrum bars at the top and bottom of the canvas
+  waveformBar()
+
   // Start creating the meteor section
   if (random(1) < 0.1) {
     // There is a 10% chance to add a new meteor on each frame
@@ -148,10 +152,28 @@ function draw() {
 
   // Adjust the rotation angle of the outer arc based on the audio volume (rms)
   arcAng += rms * 10;
-  
-  
-  
+    
 }
+
+
+function waveformBar() {
+  // Draw audio spectrum bars based on waveform data
+  for (let i = 0; i < waveform.length; i++) {
+    let hei = waveform[i] * 200; // Set height of each rectangle based on waveform data
+    let wid = 900 / waveform.length * 0.5; // Calculate width of each rectangle
+    let x = map(i, 0, waveform.length, 0, width); // Map rectangle position along the width of the canvas
+    rectMode(CENTER); // Draw rectangles from their center
+    fill(128, 89, 136); // Set rectangle color
+    noStroke(); // Remove rectangle border
+
+    // Draw rectangle at the top of the canvas
+    rect(x, 0, wid, hei);
+    // Draw rectangle at the bottom of the canvas
+    rect(x, 900, wid, hei);
+  }
+}
+
+
 // Draw a white border around a dynamic circle ring
 function drawWhiteCircle(circle) {
   stroke(255, 50); // Set stroke color to semi-transparent white
