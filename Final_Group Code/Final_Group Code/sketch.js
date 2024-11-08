@@ -35,7 +35,6 @@ function setup() {
   analyser.setInput(music);
 
 
-
   // Add circle rings at different positions: the first parameter is the x-coordinate, 
   // the second is the y-coordinate, the third is the circle ring type, 
   // the fourth is the circle ring size, and the fifth is the color
