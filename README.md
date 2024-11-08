@@ -69,3 +69,58 @@ I believe the uniqueness of my animation lies in the overall visual presentation
 ["Inspiration Link: 'Universe'](https://www.youtube.com/watch?v=ztVV54sPOns)  
 *"Below are screenshots I captured from the video."*  
 ![An image of 'Universe'](./Final_Group%20Code/Final_Group%20Code/ReadMe/Universe-1.png) ![An image of 'Universe'](./Final_Group%20Code/Final_Group%20Code/ReadMe/Universe-2.png) ![An image of 'Universe'](./Final_Group%20Code/Final_Group%20Code/ReadMe/Universe-3.png)  
+
+- My work is inspired by an exploration of the universe and memories, an inspiration that blends the visual character of deep space imagery with a sense of the passage of time and space. Images showing vast, mysterious scenes of nebulae and planets inform my designs with regard to spatiality and colour palette. These cosmic elements are not only visually appealing, but also convey a sense of serenity and nostalgia that transcends time. In my work (third image), I translate these inspirations into dynamic audio-driven visuals. Through continuous design, I hope to not only see the beauty of the universe, but also feel an atmosphere of reminiscence through the dynamic changes - like being in a dreamy universe, hearing and seeing time flow through the images.  
+
+## Technical Explanation of Code
+['Technical Link'](https://archive.p5js.org/reference/#/p5.FFT) 
+- p5.FFT(): This is a Fourier Transform tool provided by p5.js for analyzing the frequency content and waveform data of audio. In the code, fft.waveform() is used to obtain the current audio waveform data, which is stored in the waveform array. This array contains a set of real-time updated audio amplitude values that can be used to create dynamic visual effects in response to the music.
+***How it works:*** 
+- p5.FFT() uses the Fast Fourier Transform algorithm to decompose the audio signal into a series of frequency components. The amplitude or “energy” of each component is updated in waveform, representing the real-time fluctuation of the audio signal.
+Application: The waveform data is mapped to visual effects using the map() function. For example, in dynamic rings and spectrum bars, these values control size, opacity, scaling, and even rotation speed, making the visual effects change in real-time with the rhythm of the music.
+- p5.Amplitude(): This is a simple volume analysis tool used to obtain the overall volume level (RMS) of the audio. analyser.getLevel() returns the real-time volume value, which is assigned to the rms variable. The rms value further controls the overall dynamics of the animation, such as the rotation speed and size variation of the rings.
+***How it works:***
+- p5.Amplitude analyzes the average volume of the audio and returns a value between 0 and 1, representing the relative size of the current volume.
+Application: In the code, rms is used to control the size of the rings (scale(rms)) and the rotation angle (arcAng += rms * 10), giving the animation a rhythmic, dynamic effect in line with the music.
+
+## Code Modifications for the Team Project 
+**Integration of Audio-Driven p5.FFT()**
+*Modification:* 
+Added audio analysis functionality using p5.FFT() and p5.Amplitude() in the team’s base code to obtain real-time frequency and volume data.  
+*Reason:*  
+To create a dynamic playback effect of “memories” through music, real-time audio data was needed to drive visual changes, allowing the visuals to pulsate with the rhythm of the music and create an immersive experience.
+*Effect:*  
+The animation now changes in real time with the audio fluctuations. This, combined with the cosmic theme, merges the fragmentary nature of memories with the fluidity of the universe, allowing viewers to feel memories flickering and emerging like stars in the cosmos.
+
+**Addition of Dynamic Rings and Particle System**  
+*Modification:*  
+Added initialization and distribution code for multiple dynamic rings in the setup() function, creating a multi-layered dynamic ring system through the Circle class.  
+*Reason:*  
+To evoke the depth and mystery of the universe, where the dynamic rings resemble planetary orbits, and the particle system simulates a galaxy structure, adding a sense of flow that symbolizes countless shimmering fragments of memories.  
+*Effect:* 
+The dynamic rings and particle system expand and rotate with the audio rhythm, creating a deep starry effect in the cosmic background, presenting a layered, resonant “sea of memories” image.  
+
+**Responsive Scaling with Window Resizing**
+*Modification:* 
+Added a scaling factor, scaleFactor, in the windowResized() function to ensure that the animation adjusts with window size changes, maintaining visual consistency.  
+*Reason:*  
+To adapt to screens of different sizes, ensuring that viewers can fully experience the animation’s cosmic depth and memory fragments regardless of the device used.  
+*Effect:*  
+The animation automatically resizes when the screen size changes, allowing viewers to enjoy an immersive cosmic experience on any device.  
+
+**Gradient Background and Halo Effect**  
+*Modification:*  
+Added a gradient background from black to deep blue and a soft halo effect around the dynamic rings in the draw() function.
+*Reason:* 
+The deep night sky background supports the cosmic theme, while the halo symbolizes the softness and blur of memories, making them appear within the vast universe.
+*Effect:*  
+The gradient background simulates the depth of the universe, while the halo adds gentle lighting to the memories, like stars flickering in deep memories, enhancing the emotional expression of the visuals.
+
+**Images Surrounding Dynamic Rings**  
+*Modification:*  
+Added a drawImagesAroundCircle() function to draw images around the rings, creating a visual effect of celestial bodies in orbit.
+*Reason:*  
+By adding static hologram images as celestial bodies, the rings are crafted to resemble planetary orbits combined with fragments of memories, enhancing the atmosphere of the cosmos and memories.
+*Effect:* 
+The effect of celestial bodies orbiting the dynamic rings simulates the orbital structure of a cosmic system, and combined with the hazy effect of holograms, it better represents memories flickering in the universe, strengthening the emotional resonance of “cosmos and memories.”
+These modifications combine dynamic rings, audio-driven oscillations, gradient backgrounds, and soft halo effects to perfectly blend the vastness of the cosmos with the fragmented nature of memories, making the entire animation visually deeper and more aligned with the theme of “cosmos and memories.”
