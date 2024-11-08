@@ -23,8 +23,6 @@ function mousePressed() {
   }
 }
 
-
-
 function setup() {
 
   createCanvas(900, 900);
@@ -42,7 +40,9 @@ function setup() {
   
   
   cirs.push(new Circle(20, 9, 1, 160, color(176,224,230), true)); // First circle ring in the top left
+  
   cirs.push(new Circle(515, 451, 2, 200, color(255,250,250), true)); // Circle ring in the center of the canvas
+  
   cirs.push(new Circle(-40, 715, 1, 200, color(	250,250,210), true)); // First circle ring at the bottom edge
 
   cirs.push(new Circle(345, 130, 2, 130, color(250,250,210), true)); // Second circle ring at the top
@@ -64,7 +64,6 @@ function setup() {
     // Add 800 stationary stars
     stars.push(new Star());
   }
-
 }
 
 function draw() {
@@ -87,7 +86,6 @@ function draw() {
     stroke(c); // Set the color for the current line
     line(0, y, width / scaleFactor, y); // Draw a horizontal line across the full canvas width
   }
-
   
   // Draw two audio spectrum bars at the top and bottom of the canvas
   waveformBar()
@@ -167,8 +165,6 @@ function draw() {
     text("Click on the screen to play music", 450, 450);
   }
 }
-
-
 
 function waveformBar() {
   // Define the gradient colors: blue to purple
@@ -297,7 +293,7 @@ class Circle {
   init() {
     // Add particles in different arrangements based on the circle ring style
     if (this.style == 1) {
-      this.layer = 14; // Number of layers in the ring
+      this.layer = 10; // Number of layers in the ring
       for (let l = 0; l < this.layer; l += 1) {
         for (let i = 0; i < 4; i++) {
           for (let n = 0; n < 90; n += 2) {
