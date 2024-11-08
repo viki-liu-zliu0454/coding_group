@@ -53,7 +53,6 @@ function setup() {
 
   cirs.push(new Circle(134, 370, 3, 140, color(153, 191, 236), false)); // Circle ring in the middle-left of the canvas
 
-
   cirs.push(new Circle(630, 903, 4, 200, color(	255,239,213), false)); // Third circle ring at the bottom edge
 
   cirs.push(new Circle(310, 730, 2, 150, color(153, 191, 236), false)); // Second circle ring at the bottom edge
@@ -68,6 +67,7 @@ function setup() {
 
 function draw() {
   // Use p5.FFT to get the waveform data of the current audio
+  // p5.js: https://archive.p5js.org/reference/#/p5.FFT
   waveform = fft.waveform();
   
   // Apply the scale factor to adjust the size of the content
@@ -154,7 +154,7 @@ function draw() {
   // Adjust the rotation angle of the outer arc based on the audio volume (rms)
   arcAng += rms * 10;
     
-  if (millis() < 5000) {
+  if (millis() < 10000) {
     // Display instructional text for the first 5 seconds of the program
     fill(255, 200);
     textAlign(CENTER);
@@ -167,7 +167,7 @@ function draw() {
 }
 
 function waveformBar() {
-  // Define the gradient colors: blue to purple
+  // Define the gradient colors: white to blue 
   let startColor = color(	255,255,255); // white
   let endColor = color(135,206,250); //LightSkyBlue
 
