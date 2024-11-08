@@ -34,11 +34,11 @@ function setup() {
   // Connect the input of the analyser to the song
   analyser.setInput(music);
 
+
+
   // Add circle rings at different positions: the first parameter is the x-coordinate, 
   // the second is the y-coordinate, the third is the circle ring type, 
   // the fourth is the circle ring size, and the fifth is the color
-  
-  
   cirs.push(new Circle(20, 9, 1, 160, color(176,224,230), true)); // First circle ring in the top left
   
   cirs.push(new Circle(515, 451, 2, 200, color(255,250,250), true)); // Circle ring in the center of the canvas
