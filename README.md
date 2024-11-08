@@ -4,6 +4,7 @@
 ![An image of 'Wheels of Fortune'](./Final_Group%20Code/Final_Group%20Code/ReadMe/Pacita_Abad_Wheels_of_fortune.jpg) ![An image of 'Group work'](./Final_Group%20Code/Final_Group%20Code/ReadMe/Group.png) 
 ## My work
 ![An image of 'my work'](./Final_Group%20Code/Final_Group%20Code/ReadMe/galaxies.png) ![An image of 'my work'](./Final_Group%20Code/Final_Group%20Code/ReadMe/galaxies-2.png)  
+
 ## Instructions for Interacting with the Work
 I chose an interactive approach that uses the volume and frequency information of audio to dynamically display animation effects. By clicking the screen, music playback is initiated, and as the rhythm progresses, the visuals change in real-time according to the audio's volume and frequency, syncing perfectly with the music. Clicking again will pause both the music and animation. There will also be a prompt on the screen to guide users to easily control the interaction between music and animation with a simple tap, creating an immersive experience that blends sight and sound.
 
@@ -18,5 +19,53 @@ Meteors appear randomly in the background, adding vibrancy and dynamism to the s
 
 ## Animation Properties and Uniqueness
 ["FFT Link"](https://archive.p5js.org/reference/#/p5.FFT)  
-In this animation, the audio and visual effects are tightly synchronized. I used audio volume and frequency data as the core driving force for the animation. By utilizing p5.js's p5.FFT() and p5.Amplitude() methods, I can retrieve real-time waveform and volume data from the music, mapping this data to multiple visual elements in the animation. The size, rotation angle, and details of the dynamic rings change with the audio fluctuations, allowing the animation to respond to the rhythm and frequency of the music in real time, creating an immersive experience that aligns closely with the music. This dynamic quality not only enriches the visual appeal but also makes the audience feel as if they are "seeing" the rhythm of the music.  
-![An image of 'my work'](./Final_Group%20Code/Final_Group%20Code/ReadMe/audio_visualization_p5_fft_amplitude.png) 
+In this animation, the audio and visual effects are tightly synchronized. I used audio volume and frequency data as the core driving force for the animation. By utilizing p5.js's p5.FFT() and p5.Amplitude() methods, I can retrieve real-time waveform and volume data from the music, mapping this data to multiple visual elements in the animation. The size, rotation angle, and details of the dynamic rings change with the audio fluctuations, allowing the animation to respond to the rhythm and frequency of the music in real time, creating an immersive experience that aligns closely with the music. This dynamic quality not only enriches the visual appeal but also makes the audience feel as if they are "seeing" the rhythm of the music. 
+
+***Code Implementation:***  
+In the draw() function, audio data is retrieved using p5.FFT() and p5.Amplitude(). The waveform data is accessed through the waveform variable, and the volume data through the rms variable.  
+![An image of 'my work'](./Final_Group%20Code/Final_Group%20Code/ReadMe/audio_visualization_p5_fft_amplitude.png)  
+***Explanation:***  
+The data from waveform and rms is used to control the size, rotation angle, and overall visual dynamics of the dynamic rings, ensuring that the animation stays synchronized with the rhythm of the music.  
+## Colors
+I chose soft, cool tones as the primary colors, such as light blue, pale yellow, and white, contrasting with the dark gradient background. These colors give the scene a tranquil, night-sky feel, while adding a dreamy effect to the meteors, rings, and stars. Each ring displays a different color combination depending on its layer, adding depth to the overall scene without making it appear monotonous.  
+***Code Implementation:***  
+In the Circle class and waveformBar() function, soft, cool tones like light blue, pale yellow, and white are specified.  
+![An image of 'my work'](./Final_Group%20Code/Final_Group%20Code/ReadMe/color_adjustments.png)  
+
+## Opacity  
+Opacity is a key element I use to enhance visual hierarchy and spatiality. In the design of the circle and the shooting star, I set a gradient opacity so that they are more defined in the centre part and gradually fade out at the edges. This translucent effect gives the rings a softer look and a sense of invisibility. In addition, the tails of the meteors are fading away, which is very psychedelic and unrealistic.  
+***Code Implementation:***  
+In the drawWhiteCircle() function, gradient opacity is used to draw the ring boundaries, and in the Star and Meteor classes, a gradient is applied to the tails of the meteors.  
+![An image of 'my work'](./Final_Group%20Code/Final_Group%20Code/ReadMe/opacity_adjustments.png)  
+
+## Multi-layered Dynamic Rings 
+The body of the animation is a number of multi-layered dynamic circles. Each ring is made up of different types of particles that expand, contract and rotate slightly as the audio changes. This design adds variety to the form and movement of each ring, creating a sense of flow, as if the whole image is ‘breathing’, as if in a dream or memory. The transparency, size and rotation of each particle is adjusted in real time according to the audio, creating a three-dimensional and rhythmic visual effect.  
+***Code Implementation:***  
+In the Circle class, multi-layered dynamic rings are created, with each layer composed of different particles. The opacity and size of the particles change in real-time based on the audio data.  
+![An image of 'my work'](./Final_Group%20Code/Final_Group%20Code/ReadMe/concise_circle_class_code.png)  
+
+## Dynamic Spatial Depth of Stars and Meteors
+In the background, I designed static stars and dynamic meteors. The stars remain static, forming a stable background of the night sky, while the meteors appear randomly with a certain probability, crossing from different directions in the picture, increasing the dynamic spatial hierarchy of the picture. The speed, trajectory and transparency of the meteors are also adjusted to make them look natural and dynamic, as if they were in an active cosmic scene. This combination of elements not only enriches the image, but also adds a mysterious atmosphere to the whole animation. 
+***Code Implementation:***  
+The Star and Meteor classes are used to create static stars and dynamic meteors respectively. The stars remain static, while the meteors are randomly generated and move.  
+![An image of 'my work'](./Final_Group%20Code/Final_Group%20Code/ReadMe/star_and_meteor_classes.png)  
+
+## Gradient Background and Halo Effect
+I designed a gradient background from black to deep blue and added a translucent white halo effect around the circle. The background gradient creates a sense of depth in the night sky, while the halo provides a visually soft transition to the dynamic circle, enhancing the layered feel of the animation. This combination of background and halo not only adds visual aesthetics, but also gives the viewer a sense of deep serenity, as if they are in the universe, with shooting stars and starry sky. 
+***Code Implementation:***  
+A background gradient is implemented in the draw() function, and a translucent halo is added to the dynamic circle using the drawWhiteCircle() function.
+![An image of 'my work'](./Final_Group%20Code/Final_Group%20Code/ReadMe/gradient_and_glow_effect.png)  
+
+## Audio-driven waveform spectral bars
+At the top and bottom of the screen, I added spectral bars based on the audio waveform. The colour of the spectral bar fades from white to light blue, rising and falling in response to audio fluctuations. This design echoes the main screen, which visually enriches the layers and further enhances the synchronisation between the audio and the visuals.  
+***Code Implementation:***  
+The waveformBar() function draws a spectral bar based on the audio waveform at the top and bottom of the screen.  
+![An image of 'my work'](./Final_Group%20Code/Final_Group%20Code/ReadMe/waveform_spectrum_bars.png)  
+
+## Uniqueness  
+I believe the uniqueness of my animation lies in the overall visual presentation. It goes beyond simple audio data visualization by integrating visual elements with the dynamics of the music to create a sense of “rhythm.” Every element—whether rings, stars, meteors, or spectrum bars—responds to the changes in the music. The audio-driven pulsation and rotation of the rings intertwine the visuals with the music, making it feel as if the music is flowing within the scene. Additionally, the randomness of the meteors and the static starry background contribute to the night sky ambiance, providing viewers with an immersive experience that feels dreamlike.  
+
+## Inspirational References
+["Inspiration Link: 'Universe'](https://www.youtube.com/watch?v=ztVV54sPOns)  
+*"Below are screenshots I captured from the video."*  
+![An image of 'Universe'](./Final_Group%20Code/Final_Group%20Code/ReadMe/Universe-1.png) ![An image of 'Universe'](./Final_Group%20Code/Final_Group%20Code/ReadMe/Universe-2.png) ![An image of 'Universe'](./Final_Group%20Code/Final_Group%20Code/ReadMe/Universe-3.png)  
